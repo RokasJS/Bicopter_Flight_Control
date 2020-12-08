@@ -85,11 +85,12 @@ void read_acc_gyro()
 			zGyro -= 65536;
 	
 		
-		//Conversion
+		//Conversion plus compensation
 		xAccl = xAccl*Ares+accelBias[0];
 		yAccl = yAccl*Ares+accelBias[1];
 		zAccl = zAccl*Ares+accelBias[2];
 		
+		//Limits
 		if(xAccl>1)
 				xAccl=1;
 			else if (xAccl<-1)
@@ -103,6 +104,7 @@ void read_acc_gyro()
 			else if (zAccl<-1)
 				zAccl=-1;
 		
+		// Degree to rad/s conversion for fusion library
 		xGyro = AHRSIMU_DEG2RAD(xGyro*Gres);
 		yGyro = AHRSIMU_DEG2RAD(yGyro*Gres);
 		zGyro = AHRSIMU_DEG2RAD(zGyro*Gres);
