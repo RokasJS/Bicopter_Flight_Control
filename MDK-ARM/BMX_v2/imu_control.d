@@ -1,4 +1,4 @@
-bmx_v2\imu_control.o: IMU_Control.c
+bmx_v2\imu_control.o: ..\Src\IMU_Control.c
 bmx_v2\imu_control.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 bmx_v2\imu_control.o: ../Inc/main.h
 bmx_v2\imu_control.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h
