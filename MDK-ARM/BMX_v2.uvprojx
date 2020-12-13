@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32L053xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;        ../Drivers/STM32L0xx_HAL_Driver/Inc;        ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy;        ../Drivers/CMSIS/Device/ST/STM32L0xx/Include;        ../Drivers/CMSIS/Include;     ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;     ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc</IncludePath>
+              <IncludePath>../Inc;         ../Drivers/STM32L0xx_HAL_Driver/Inc;         ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy;         ../Drivers/CMSIS/Device/ST/STM32L0xx/Include;         ../Drivers/CMSIS/Include;      ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;      ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -399,6 +399,16 @@
               <FilePath>..\Src\tm_stm32_ahrs_imu.c</FilePath>
             </File>
             <File>
+              <FileName>IMU_Control.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Inc\IMU_Control.h</FilePath>
+            </File>
+            <File>
+              <FileName>IMU_Control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\IMU_Control.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
@@ -434,14 +444,14 @@
               <FilePath>../Src/stm32l0xx_hal_msp.c</FilePath>
             </File>
             <File>
-              <FileName>IMU_Control.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Inc\IMU_Control.h</FilePath>
+              <FileName>Functions.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\Functions.c</FilePath>
             </File>
             <File>
-              <FileName>IMU_Control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\IMU_Control.c</FilePath>
+              <FileName>Functions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Inc\Functions.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -527,6 +537,11 @@
               <FileName>stm32l0xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l0xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_spi.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_tim.c</FileName>

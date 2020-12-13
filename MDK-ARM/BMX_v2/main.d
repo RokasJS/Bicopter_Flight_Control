@@ -27,6 +27,7 @@ bmx_v2\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_i2c.h
 bmx_v2\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_i2c_ex.h
 bmx_v2\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr.h
 bmx_v2\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr_ex.h
+bmx_v2\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.h
 bmx_v2\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim.h
 bmx_v2\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim_ex.h
 bmx_v2\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pcd.h
@@ -48,3 +49,4 @@ bmx_v2\main.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h
 bmx_v2\main.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h
 bmx_v2\main.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h
 bmx_v2\main.o: ../Inc/IMU_Control.h
+bmx_v2\main.o: ../Inc/Functions.h

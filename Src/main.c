@@ -27,15 +27,28 @@
 #include "usbd_cdc_if.h"
 #include <string.h>
 #include "IMU_Control.h"
+#include "Functions.h"
 /* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
 /* USER CODE END PD */
 
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
+
+SPI_HandleTypeDef hspi2;
 
 TIM_HandleTypeDef htim2;
 
@@ -46,6 +59,7 @@ float dt[2], Kp[2], Ki[2], Kd[2]; 	// PID Coefficients -- 1 ~ Servo, 2 ~ Motor
 float servo_angle0, servo_angle1, motor_angle0, motor_angle1, motor_PID; // PWM period angles
 float motor_power, servo_power;			// RC controller inputs
 uint8_t stat;												// Status variable for testing
+uint8_t z[4];												// RX Control parameters
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -53,6 +67,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_SPI2_Init(void);
 /* USER CODE BEGIN PFP */
 void writeByte(uint8_t address, uint8_t subAddress, uint8_t data);
 uint8_t readByte(uint8_t address, uint8_t subAddress);
@@ -147,10 +162,12 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM2_Init();
   MX_USB_DEVICE_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
 	
 	SysTick_Config(SystemCoreClock/32000); // Set up systick period
 	HAL_I2C_Init(&hi2c1);		// Start I2C bus comms
+  RFM96WRX_Config();
 	//CDC_Init_FS(); 				// Start Virtual Link comms
 	
 	// Start 4 PWM channels
@@ -189,15 +206,17 @@ int main(void)
   while (1)
   {
 		read_acc_gyro(); 	// Read IMU data
+		
 		if(tt > 100){ 		// Update every sensor fusion period
 			TM_AHRSIMU_UpdateIMU(&heh, xGyro, yGyro, zGyro, xAccl, yAccl, zAccl);
 			heh.Roll = heh.Roll + 180;
 			if(stat == 0){ 			// If testing status = 0
-			servo_angle0 = PID(0, heh.Pitch, 0)+servo_power; 	// Servo_0 PID calc and PWM period.
-			servo_angle1 = 155-servo_angle0;									// Servo_1 opposite pitch PWM calc.
-			motor_PID = PID(0, heh.Roll, 1)/10;								// Motor PID calc.
-			motor_angle0 = motor_PID+motor_power;							// Motor_0 PWM period
-			motor_angle1 = motor_power-motor_PID;							// Motor_1 PWM period
+				RFM96WRX_recieve(z);
+				servo_angle0 = PID((15-z[0]), heh.Pitch, 0)+z[3];		// Servo_0 PID calc and PWM period.
+				servo_angle1 = 155-servo_angle0;											// Servo_1 opposite pitch PWM calc.
+				motor_PID = PID((10-z[2]), heh.Roll, 1)/10;								// Motor PID calc.
+				motor_angle0 = motor_PID+z[1];							// Motor_0 PWM period
+				motor_angle1 = z[1]-motor_PID;							// Motor_1 PWM period
 			}
 		else if (stat == 1){	// If testing status = 1
 			
@@ -318,6 +337,44 @@ static void MX_I2C1_Init(void)
 }
 
 /**
+  * @brief SPI2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI2_Init(void)
+{
+
+  /* USER CODE BEGIN SPI2_Init 0 */
+
+  /* USER CODE END SPI2_Init 0 */
+
+  /* USER CODE BEGIN SPI2_Init 1 */
+
+  /* USER CODE END SPI2_Init 1 */
+  /* SPI2 parameter configuration*/
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi2.Init.CRCPolynomial = 7;
+  if (HAL_SPI_Init(&hspi2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI2_Init 2 */
+
+  /* USER CODE END SPI2_Init 2 */
+
+}
+
+/**
   * @brief TIM2 Initialization Function
   * @param None
   * @retval None
@@ -395,10 +452,21 @@ static void MX_TIM2_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(NSS_GPIO_Port, NSS_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin : NSS_Pin */
+  GPIO_InitStruct.Pin = NSS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(NSS_GPIO_Port, &GPIO_InitStruct);
 
 }
 

@@ -59,9 +59,12 @@ void Error_Handler(void);
 void writeByte(uint8_t address, uint8_t subAddress, uint8_t data);
 uint8_t readByte(uint8_t address, uint8_t subAddress);
 void readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest);
+extern SPI_HandleTypeDef hspi2;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define NSS_Pin GPIO_PIN_15
+#define NSS_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
