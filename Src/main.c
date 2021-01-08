@@ -59,7 +59,7 @@ float dt[2], Kp[2], Ki[2], Kd[2]; 	// PID Coefficients -- 1 ~ Servo, 2 ~ Motor
 float servo_angle0, servo_angle1, motor_angle0, motor_angle1, motor_PID; // PWM period angles
 float motor_power, servo_power;			// RC controller inputs
 uint8_t stat;												// Status variable for testing
-uint8_t z[4];												// RX Control parameters
+uint8_t z[5];												// RX Control parameters
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -167,7 +167,7 @@ int main(void)
 	
 	SysTick_Config(SystemCoreClock/32000); // Set up systick period
 	HAL_I2C_Init(&hi2c1);		// Start I2C bus comms
-  RFM96WRX_Config();
+  //RFM96WRX_Config();
 	//CDC_Init_FS(); 				// Start Virtual Link comms
 	
 	// Start 4 PWM channels
@@ -181,10 +181,10 @@ int main(void)
 	fastcompaccelBMX055();
 	
 	// Servo PID coef.
-	dt[0] = 0.015;
-	Kp[0] = 0.1;
-	Ki[0] = 0.005;
-	Kd[0] = 0.01;
+	dt[0] = 0;
+	Kp[0] = 0;
+	Ki[0] = 0;
+	Kd[0] = 0;
 	
 	// Motor PID coef.
 	dt[1] = 0.015;
@@ -209,12 +209,16 @@ int main(void)
 		
 		if(tt > 100){ 		// Update every sensor fusion period
 			TM_AHRSIMU_UpdateIMU(&heh, xGyro, yGyro, zGyro, xAccl, yAccl, zAccl);
-			heh.Roll = heh.Roll + 180;
+			if(heh.Roll >= 0)
+				heh.Roll = heh.Roll*(-1)+180;
+			else
+				heh.Roll = heh.Roll*(-1)-180;
 			if(stat == 0){ 			// If testing status = 0
-				RFM96WRX_recieve(z);
+				//RFM96WRX_recieve(z);
+				
 				servo_angle0 = PID((15-z[0]), heh.Pitch, 0)+z[3];		// Servo_0 PID calc and PWM period.
 				servo_angle1 = 155-servo_angle0;											// Servo_1 opposite pitch PWM calc.
-				motor_PID = PID((10-z[2]), heh.Roll, 1)/10;								// Motor PID calc.
+				motor_PID = -PID((10-z[2]), heh.Roll, 1)/7;								// Motor PID calc.
 				motor_angle0 = motor_PID+z[1];							// Motor_0 PWM period
 				motor_angle1 = z[1]-motor_PID;							// Motor_1 PWM period
 			}
@@ -226,7 +230,7 @@ int main(void)
 		htim2.Instance->CCR1 = servo_angle0;
 		htim2.Instance->CCR2 = motor_angle0;
 		htim2.Instance->CCR3 = servo_angle1;
-		htim2.Instance->CCR4 = motor_angle1;
+		htim2.Instance->CCR4 = motor_angle0;
 		
 		tt = 0; // Period counter to zero
 		
